@@ -148,7 +148,7 @@ body {
 .action-btn { background-color: var(--bg-tertiary); border: 1px solid var(--border-hover); border-radius: 12px; padding: 15px 25px; color: var(--text-primary); cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 14px; transition: all 0.2s; }
 .action-btn:hover { background-color: var(--bg-quaternary); transform: translateY(-2px); }
 .sample-questions { display: flex; flex-direction: column; gap: 15px; align-items: center; }
-.sample-question { background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px 25px; cursor: pointer; transition: all 0.2s; font-size: 14px; color: var(--text-tertiary); max-width: 500px; width: 100%; }
+.sample-question { background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; padding: 18px 30px; cursor: pointer; transition: all 0.1s; font-size: 14px; color: var(--text-tertiary); max-width: 500px; width: 100%; min-height: 44px; display: flex; align-items: center; justify-content: center; }
 .sample-question:hover { background-color: var(--bg-tertiary); color: var(--text-primary); }
 .message { max-width: 700px; width: 100%; margin-bottom: 20px; animation: fadeIn 0.3s ease-in; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -165,11 +165,11 @@ body {
 /* Input Area */
 .input-container { padding: 20px 30px; border-top: 1px solid var(--border-color); background-color: var(--bg-primary); transition: background-color 0.3s ease; }
 .input-wrapper { max-width: 700px; margin: 0 auto; position: relative; display: flex; align-items: flex-end; gap: 12px; }
-.model-selector { background-color: var(--bg-tertiary); border: 1px solid var(--border-hover); border-radius: 12px; padding: 12px 16px; color: var(--text-primary); font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 10px; position: relative; transition: all 0.2s ease; min-width: 200px; white-space: nowrap; }
+.model-selector { background-color: var(--bg-tertiary); border: 1px solid var(--border-hover); border-radius: 12px; padding: 16px 20px; color: var(--text-primary); font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 10px; position: relative; transition: all 0.1s ease; min-width: 200px; white-space: nowrap; min-height: 48px; }
 .model-selector:hover, .model-selector.active { background-color: var(--bg-quaternary); border-color: var(--accent-purple); }
 .model-selector .model-logo { display: flex; align-items: center; justify-content: center; width: 18px; height: 18px; flex-shrink: 0; }
 .model-selector .model-logo svg { width: 100%; height: 100%; fill: currentColor; }
-.dropdown-icon { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; margin-left: auto; transition: transform 0.2s ease; }
+.dropdown-icon { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; margin-left: auto; transition: transform 0.15s ease; }
 .model-selector.active .dropdown-icon { transform: rotate(180deg); }
 .message-input { flex: 1; background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px 20px; padding-right: 60px; color: var(--text-primary); font-size: 15px; resize: none; outline: none; transition: border-color 0.2s, background-color 0.3s ease; min-height: 51px; }
 .message-input:focus { border-color: var(--accent-purple); }
@@ -210,7 +210,7 @@ body {
     opacity: 0;
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     
-    /* CRITICAL: Allow tooltips to show outside the popover's bounds */
+    /* CRITICAL FIX: Allow tooltips to show outside the popover's bounds */
     overflow: visible; 
 }
 
@@ -266,9 +266,9 @@ body {
 
 /* Popover Content (Scrollable Area) */
 .popover-content-scrollable {
-    flex: 1; 
-    overflow-y: auto;
-    overflow-x: visible; /* Add this to allow horizontal overflow for tooltips */
+    flex: 1;
+    overflow-y: scroll; /* MODIFIED: Use 'scroll' to always reserve space and prevent layout shift */
+    overflow-x: hidden; /* Prevent horizontal scroll */
     padding: 0px 6px 16px 6px;
 }
 
@@ -347,18 +347,20 @@ body {
 /* Collapsible Provider Section */
 .provider-section-collapsible {
     margin-bottom: 16px;
+    /* REMOVED: z-index: -1; - This was blocking tooltips */
 }
 .provider-section-header {
     display: flex;
     align-items: center;
-    padding: 10px 12px;
+    padding: 14px 16px;
     cursor: pointer;
     background-color: transparent;
     border-radius: 8px;
     margin-bottom: 8px;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.1s ease;
     color: var(--text-primary);
     font-weight: 500;
+    min-height: 44px; /* Ensure consistent clickable height */
 }
 .provider-section-header:hover {
     background-color: var(--bg-tertiary);
@@ -382,16 +384,16 @@ body {
 .provider-section-header .provider-model-count { color: var(--text-secondary); font-size: 13px; margin: 0 10px; }
 .provider-toggle-icon {
     width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2;
-    transition: transform 0.2s ease-in-out; flex-shrink: 0;
+    transition: transform 0.15s ease-in-out; flex-shrink: 0;
 }
 .provider-section-header.open .provider-toggle-icon { transform: rotate(180deg); }
 
 .popover-model-grid.provider-grid {
-    padding-left: 16px;
-    max-height: 1000px;
+    padding-left: 16px; /* Indent models under provider */
+    max-height: 1000px; /* Large enough for content */
     opacity: 1;
-    transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out, padding 0.3s ease-in-out, margin 0.3s ease-in-out;
-    overflow: visible; /* Add this to prevent clipping tooltips */
+    transition: max-height 0.15s ease-in-out, opacity 0.15s ease-in-out, padding 0.15s ease-in-out, margin 0.15s ease-in-out;
+    overflow: visible; /* FIXED: Prevent clipping tooltips */
 }
 .popover-model-grid.provider-grid.collapsed {
     max-height: 0;
@@ -399,6 +401,13 @@ body {
     padding-bottom: 0;
     margin-top: -8px; /* Counteract the header's margin-bottom */
     opacity: 0;
+    pointer-events: none; /* Prevent clicking on hidden cards */
+}
+
+/* Ensure cards in collapsed providers are not clickable */
+.popover-model-grid.provider-grid.collapsed .model-card-popover {
+    pointer-events: none;
+    cursor: default;
 }
 
 .popover-model-grid {
@@ -412,23 +421,25 @@ body {
     background-color: var(--bg-secondary); 
     border: 1px solid var(--popover-border); 
     border-radius: 12px; 
-    padding: 12px 8px; 
+    padding: 16px 12px; 
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.1s ease;
     position: relative;
-    min-height: 148px; 
+    min-height: 160px; 
     display: flex;
     flex-direction: column;
     align-items: center; 
     text-align: center;
     color: var(--text-primary); 
-    z-index: 1; 
+    z-index: 1;
+    /* Ensure the entire card area is clickable */
+    user-select: none;
 }
 .model-card-popover:not(.premium):hover {
     background-color: var(--bg-tertiary); 
     border-color: var(--accent-purple);
     transform: translateY(-2px);
-    z-index: 5; /* Lifts the card and its tooltip above other cards */
+    z-index: 100; /* FIXED: Lifts the card and its tooltip above other cards */
 }
 .model-card-popover.active {
     border-color: var(--accent-purple);
@@ -444,7 +455,7 @@ body {
     opacity: 1;
     border-color: var(--accent-pink);
     transform: translateY(-2px);
-    z-index: 5; /* Lifts the card and its tooltip above other cards */
+    z-index: 100; /* FIXED: Lifts the card and its tooltip above other cards */
 }
 
 .model-card-popover .model-logo-main { 
@@ -478,7 +489,7 @@ body {
     margin-top: 2px;
 }
 
-/* Tooltip styles for the subtitle */
+/* Tooltip styles for the subtitle - FIXED FOR EDGE DETECTION */
 .model-card-popover .model-subtitle {
     position: absolute;
     bottom: calc(100% + 10px); 
@@ -494,14 +505,16 @@ body {
     text-align: center;
     width: max-content;
     max-width: 220px;
+    min-width: 120px; /* Ensure minimum width for better positioning */
     white-space: normal;
     box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-    z-index: 1000; /* Increase z-index to ensure it appears above everything */
+    z-index: 1000;
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+    transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
 }
+
 /* The little triangle/arrow for the tooltip */
 .model-card-popover .model-subtitle::after {
     content: '';
@@ -512,15 +525,83 @@ body {
     border-width: 5px;
     border-style: solid;
     border-color: var(--bg-quaternary) transparent transparent transparent;
-    
 }
 
 /* Show the tooltip on hover */
 .model-card-popover:hover .model-subtitle {
-    z-index: 200; /* Ensure it appears above other elements */
+    z-index: 1001;
     opacity: 1;
     visibility: visible;
     transform: translateX(-50%) translateY(-5px);
+}
+
+/* Smart positioning for tooltips near edges */
+/* For cards in the first column (left edge) */
+.popover-model-grid .model-card-popover:nth-child(1) .model-subtitle,
+.popover-model-grid .model-card-popover:nth-child(5n+1) .model-subtitle {
+    left: 0;
+    transform: translateX(0);
+}
+
+.popover-model-grid .model-card-popover:nth-child(1):hover .model-subtitle,
+.popover-model-grid .model-card-popover:nth-child(5n+1):hover .model-subtitle {
+    transform: translateX(0) translateY(-5px);
+}
+
+/* Adjust arrow position for left-aligned tooltips */
+.popover-model-grid .model-card-popover:nth-child(1) .model-subtitle::after,
+.popover-model-grid .model-card-popover:nth-child(5n+1) .model-subtitle::after {
+    left: 20px;
+    transform: translateX(0);
+}
+
+/* For cards in the last column (right edge) */
+.popover-model-grid .model-card-popover:nth-child(4) .model-subtitle,
+.popover-model-grid .model-card-popover:nth-child(5n) .model-subtitle {
+    left: auto;
+    right: 0;
+    transform: translateX(0);
+}
+
+.popover-model-grid .model-card-popover:nth-child(4):hover .model-subtitle,
+.popover-model-grid .model-card-popover:nth-child(5n):hover .model-subtitle {
+    transform: translateX(0) translateY(-5px);
+}
+
+/* Adjust arrow position for right-aligned tooltips */
+.popover-model-grid .model-card-popover:nth-child(4) .model-subtitle::after,
+.popover-model-grid .model-card-popover:nth-child(5n) .model-subtitle::after {
+    left: auto;
+    right: 20px;
+    transform: translateX(0);
+}
+
+/* Alternative approach using CSS container queries (for modern browsers) */
+@supports (container-type: inline-size) {
+    .popover-model-grid {
+        container-type: inline-size;
+    }
+    
+    /* For very narrow containers, adjust all tooltips */
+    @container (max-width: 300px) {
+        .model-card-popover .model-subtitle {
+            left: 0;
+            right: 0;
+            transform: none;
+            margin: 0 10px;
+            width: auto;
+            max-width: none;
+        }
+        
+        .model-card-popover:hover .model-subtitle {
+            transform: translateY(-5px);
+        }
+        
+        .model-card-popover .model-subtitle::after {
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    }
 }
 
 .model-card-popover .premium-icon-badge {
@@ -536,7 +617,7 @@ body {
     z-index: 2;
     padding: 3px; 
     box-shadow: var(--badge-shadow);
-    transition: transform 0.2s ease-in-out;
+    transition: transform 0.1s ease-in-out;
 }
 
 .badge-type-gem { background: var(--badge-premium-bg); }
@@ -605,11 +686,12 @@ body {
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 8px 12px; 
+    padding: 12px 16px; 
     border-radius: 6px; 
     font-size: 14px; 
     font-weight: 500;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    transition: background-color 0.1s ease, color 0.1s ease;
+    min-height: 40px; /* Ensure consistent clickable height */
 }
 .popover-footer-btn:hover {
     background-color: var(--bg-tertiary);
@@ -657,7 +739,8 @@ body {
         gap: 10px;
     }
     .model-card-popover {
-        min-height: 140px;
+        min-height: 150px;
+        padding: 14px 8px;
     }
 }
 
@@ -666,7 +749,7 @@ body {
     .chat-messages { padding: 15px; }
     .input-container { padding: 10px 15px; }
     .welcome-title { font-size: 24px; }
-    .sample-question { padding: 12px 20px; }
+    .sample-question { padding: 16px 24px; }
 
     .model-dropdown {
         width: calc(100vw - 20px);
@@ -678,13 +761,13 @@ body {
         gap: 8px;
     }
     .model-card-popover {
-        min-height: 130px;
-        padding: 10px 6px;
+        min-height: 140px;
+        padding: 12px 8px;
     }
     .model-card-popover .model-logo-main { width: 24px; height: 24px; }
     .model-card-popover .model-name-main { font-size: 13px; }
     .model-card-popover .model-name-sub { font-size: 11px; }
     .capability-badge { width: 20px; height: 20px; }
     .capability-badge svg { width: 12px; height: 12px; }
-    .popover-footer-btn { font-size: 13px; padding: 6px 10px; }
+    .popover-footer-btn { font-size: 13px; padding: 10px 14px; }
 }
