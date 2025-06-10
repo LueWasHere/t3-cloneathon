@@ -76,18 +76,18 @@ DATABASE_URL=sqlite:///chat.db
 flask run
 ```
 
-🤝 Contributors
-Created with ☕, 🎧, and a touch of madness by:
+## 🤝 Contributors
+### Created with ☕, 🎧, and a touch of madness by:
 
-LueWasHere – @LueWasHere
-Greene80501 - @greene80501
+#### _LueWasHere_ – @LueWasHere
+#### _Greene80501_ - @greene80501
 
-Special thanks to the original T3 Chat team for the inspiration and oppurtunity.
+> _Special thanks to the original T3 Chat team for the inspiration and oppurtunity._
 
-📄 License
+## 📄 License
 This project is for educational and non-commercial purposes only under the GNU General Public License.
 
-🧠 About Cloneathon
+## 🧠 About Cloneathon
 Cloneathon is a new twist on the traditional hackathon. Instead of building from scratch, participants recreate existing sites to learn their inner workings, architecture, and design patterns.
 
 Rebuild to understand. Clone to learn. 💡
