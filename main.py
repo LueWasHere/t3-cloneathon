@@ -1,9 +1,9 @@
 """
 AUTHOR: LUEWASHERE
 DOB: 6/9/2025
-LAST MOD: 6/9/2025
+LAST MOD: 6/10/2025
 
-VERSION: 0.1
+VERSION: 0.2
 """
 # Web imports
 import flask
@@ -14,6 +14,7 @@ import sqlite3
 # Other imports
 import os
 import logging
+import database.lib.database as db_lib
 
 # +===================================+
 # |                                   |
@@ -50,7 +51,6 @@ logger.info("Logger setup!")
 def load_db_script(script_name: str) -> str:
     with open(f"database/scripts/{script_name}.sql") as script_file:
         script: str = script_file.read()
-        script_file.close()
 
     return script
 
@@ -67,49 +67,86 @@ def database_check_success(operation: str, database: str, succ: dict[str, str]) 
 def create_databases() -> dict[str, str]:
     try:
         # Create files
-        connection_user: sqlite3.Connection = sqlite3.connect("database/users.db")
-        connection_data: sqlite3.Connection = sqlite3.connect("database/data.db")
+        connection_user: sqlite3.Connection = sqlite3.connect(os.path.join("database", "users.db"))
+        connection_data: sqlite3.Connection = sqlite3.connect(os.path.join("database", "data.db"))
+        connection_model: sqlite3.Connection = sqlite3.connect(os.path.join("database", "models.db"))
     
         # Create cursors
         cursor_user: sqlite3.Cursor = connection_user.cursor()
         cursor_data: sqlite3.Cursor = connection_data.cursor()
+        cursor_model: sqlite3.Cursor = connection_model.cursor()
 
         # Load scripts
         data_script: str = load_db_script("create_data_db")
         user_script: str = load_db_script("create_user_db")
+        model_script: str = load_db_script("create_models_db")
 
-        # Add necessary columns
+        # Execute script
         cursor_user.executescript(user_script)
         cursor_data.executescript(data_script)
-
-        return {"success": "success"}
+        cursor_model.executescript(model_script)
     except Exception as e:
         return {"success": "fail", "reason": str(e).replace('\n', '     \\n     ')}
 
-    return {"success": "fail", "reason": "Unknown"}
+    return {"success": "success"}
 
 def database_fix_missing() -> dict[str, str]:
-    return {"success": "fail", "reason": "Unknown"}
+    try:
+        check_for: list[str] = ["data.db", "users.db", "models.db"]
+
+        for db in check_for:
+            if db not in os.listdir("database"):
+                connection_db: sqlite3.Connection = sqlite3.connect(f"database/{db}") # Create database
+                cursor_db: sqlite3.Cursor = connection_db.cursor() # Create cursor
+                db_script: str = load_db_script(f"create_{db.replace('.db', '')}_db") # Load script
+                cursor_db.executescript(db_script) # Execute script
+
+                logger.info(f"Fixed {db}")
+    except Exception as e:
+        return {"success": "fail", "reason": str(e).replace('\n', '     \\n     ')}
+
+    return {"success": "success"}
 
 def delete_databases() -> dict[str, str]:
+    raise NotImplementedError
     return {"success": "fail", "reason": "Unknown"}
 
 def delete_database(database: str="users") -> dict[str, str]:
+    raise NotImplementedError
     return {"success": "fail", "reason": "Unknown"}
 
 # Add other functions for specific queries later...
 
-# Init database
-usersDbExists: bool = "users.db" in os.listdir("database")
-dataDbExists: bool = "data.db" in os.listdir("database")
+def main() -> None:
+    # Check databases exist variables
+    usersDbExists: bool = "users.db" in os.listdir("database")
+    dataDbExists: bool = "data.db" in os.listdir("database")
+    modelsDbExists: bool = "models.db" in os.listdir("database")
 
-# Check for missing databases, create new ones if needed
-if not usersDbExists and not dataDbExists:
-    logger.info("Creating databases...")
-    succ: dict[str, str] = create_databases()
-    database_check_success("create", "both databases", succ)
-elif (usersDbExists and not dataDbExists) or (dataDbExists and not usersDbExists):
-    logger.warning(f"{"Users" if not dataDbExists else "Data"} database exists but not {"Users" if dataDbExists else "Data"}? Consider resetting the databases!")
-    logger.info(f"Creating {"Users" if dataDbExists else "Data"}.db...")
-    succ: dict[str, str] = database_fix_missing()
-    database_check_success("create", "Users" if dataDbExists else "Data", succ)
+    # Check for missing databases, create new ones if needed
+    if not usersDbExists and not dataDbExists and not modelsDbExists:
+        logger.info("Creating databases...")
+        succ: dict[str, str] = create_databases()
+        database_check_success("create", "both databases", succ)
+    elif [usersDbExists, dataDbExists, modelsDbExists] != [True, True, True]:
+        logger.warning("The following databases are missing: ")
+        for db, exists in {"User database": usersDbExists, "Data database": dataDbExists, "Models database": modelsDbExists}.items():
+            logger.warning(db if not exists else ("-" * len(db)))
+
+        succ: dict[str, str] = database_fix_missing()
+        database_check_success("fix missing", "missing databases", succ)
+
+    logger.info("All databases exist.")
+
+    # Create class instances
+    data_db = db_lib.Data_DB()
+    users_db = db_lib.Users_DB()
+    models_db = db_lib.Models_DB()
+
+    # continue...
+
+if __name__ == "__main__":
+    try:
+        main()
+    except Exception as e:
+        logger.error(f"An unexpected error has occoured:\n{e}")
