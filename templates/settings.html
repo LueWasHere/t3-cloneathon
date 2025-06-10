@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - T3 Chat</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="/static/settings.css">
+</head>
+<body data-theme="dark">
+
+    <div class="settings-container">
+        <!-- Left Sidebar -->
+        <aside class="settings-sidebar">
+            <a href="{{ url_for('index') }}" class="back-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"></path><path d="M12 19l-7-7 7-7"></path></svg>
+                Back to Chat
+            </a>
+
+            <div class="profile-card">
+                <div class="avatar">{{ current_user.name[0] | upper if current_user.name else 'U' }}</div>
+                <h2>{{ current_user.name }}</h2>
+                <p class="email">{{ current_user.email }}</p>
+                <span class="plan-badge">{{ current_user.subscription_plan | capitalize }} Plan</span>
+            </div>
+
+        <!-- This is the NEW block for Token Usage -->
+        <div class="sidebar-card">
+            <div class="card-header">
+                <h4>Token Usage</h4>
+                <p>Resets today at 6:00 PM</p>
+            </div>
+            <div class="usage-item">
+                <div class="usage-label">
+                    <span>Standard</span>
+                    <span>{{ tokens_used | numberformat }}/{{ total_tokens | numberformat }}</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress" style="width: {{ progress_percentage }}%;"></div>
+                </div>
+                <p class="usage-remaining">{{ tokens_remaining | numberformat }} tokens remaining</p>
+            </div>
+        </div>
+
+            <div class="sidebar-card">
+                <div class="card-header">
+                    <h4>Keyboard Shortcuts</h4>
+                </div>
+                <ul class="shortcuts-list">
+                    <li><span>Search</span><div><kbd>Ctrl</kbd><kbd>K</kbd></div></li>
+                    <li><span>New Chat</span><div><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>O</kbd></div></li>
+                    <li><span>Toggle Sidebar</span><div><kbd>Ctrl</kbd><kbd>B</kbd></div></li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="settings-content">
+            <header class="content-header">
+                <button class="theme-toggle-settings" id="themeToggle" title="Toggle theme">
+                    <svg class="icon sun-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                    <svg class="icon moon-icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                </button>
+                <a href="{{ url_for('auth.logout') }}" class="sign-out-link">Sign out</a>
+            </header>
+
+            <nav class="tabs">
+                <a href="#account" class="tab-link active" data-tab="account">Account</a>
+                <a href="#customization" class="tab-link" data-tab="customization">Customization</a>
+            </nav>
+
+            <div class="tab-content">
+                <!-- Account Tab -->
+                <div id="account" class="tab-pane active">
+                    <section class="upgrade-section">
+                        <h3>Upgrade to Pro</h3>
+                        <span class="price"><sup>$</sup>8<span class="period">/month</span></span>
+                    </section>
+
+                    <div class="features-grid">
+                        <div class="feature-box">
+                            <div class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path><path d="m12 9 4.6 7.94"></path></svg></div>
+                            <h4>Access to All Models</h4>
+                            <p>Get access to our full suite of models including Claude, o3-mini-high, and more!</p>
+                        </div>
+                        <div class="feature-box">
+                            <div class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z"></path><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z"></path><path d="M12 12v9"></path></svg></div>
+                            <h4>Generous Limits</h4>
+                            <p>Receive '<strong>500 standard credits</strong>' per month, plus '<strong>100 premium credits</strong>' per month.</p>
+                        </div>
+                        <div class="feature-box">
+                             <div class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12a9.96 9.96 0 0 0 6.336 9.336"></path><path d="m9 12 2 2 4-4"></path></svg></div>
+                            <h4>Priority Support</h4>
+                            <p>Get faster responses and dedicated assistance from the T3 team whenever you need help!</p>
+                        </div>
+                    </div>
+                    <button class="upgrade-btn">Upgrade Now</button>
+                    <p class="footnote">* Premium credits are used for GPT Image Gen, Claude Sonnet, and Grok 3. Additional Premium credits can be purchased separately.</p>
+
+                    <section class="danger-zone">
+                        <h4>Danger Zone</h4>
+                        <p>Permanently delete your account and all associated data.</p>
+                        <button class="delete-btn">Delete Account</button>
+                    </section>
+                </div>
+
+                <!-- Customization Tab -->
+                <div id="customization" class="tab-pane">
+                    <h3>Customize T3 Chat</h3>
+                    <form>
+                        <div class="form-group">
+                            <label for="name">What should T3 Chat call you?</label>
+                            <input type="text" id="name" name="name" placeholder="Enter your name" maxlength="50">
+                            <span class="char-count">0/50</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="role">What do you do?</label>
+                            <input type="text" id="role" name="role" placeholder="Engineer, student, etc." maxlength="100">
+                             <span class="char-count">0/100</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="traits">What traits should T3 Chat have? (up to 50, max 100 chars each)</label>
+                            <div class="tag-input-wrapper">
+                                <span class="tag">friendly <button type="button">×</button></span>
+                                <span class="tag">witty <button type="button">×</button></span>
+                                <span class="tag">concise <button type="button">×</button></span>
+                                <span class="tag">curious <button type="button">×</button></span>
+                                <span class="tag">empathetic <button type="button">×</button></span>
+                                <span class="tag">creative <button type="button">×</button></span>
+                                <span class="tag">patient <button type="button">×</button></span>
+                                <input type="text" id="traits" name="traits" placeholder="Type a trait and press Enter or Tab...">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="interests">Anything else T3 Chat should know about you?</label>
+                            <textarea id="interests" name="interests" placeholder="Interests, values, or preferences to keep in mind" maxlength="3000" rows="6"></textarea>
+                            <span class="char-count">0/3000</span>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">Save Preferences</button>
+                        </div>
+                    </form>
+                    
+
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // --- Tab Switching Logic ---
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabLinks = document.querySelectorAll('.tab-link');
+            const tabPanes = document.querySelectorAll('.tab-pane');
+
+            tabLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const tabId = this.dataset.tab;
+                    const targetPane = document.getElementById(tabId);
+
+                    // If target doesn't exist (for placeholder tabs), do nothing.
+                    if (!targetPane) {
+                        alert('This feature is not yet implemented.');
+                        return;
+                    }
+
+                    // Update active class on links
+                    tabLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // Update active class on panes
+                    tabPanes.forEach(p => p.classList.remove('active'));
+                    targetPane.classList.add('active');
+                });
+            });
+
+            // --- Theme Toggling for this page ---
+            const themeToggleButton = document.getElementById('themeToggle');
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.body.setAttribute('data-theme', savedTheme);
+
+            themeToggleButton.addEventListener('click', () => {
+                const currentTheme = document.body.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                document.body.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+            });
+        });
+    </script>
+
+</body>
+</html>
