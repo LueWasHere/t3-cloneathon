@@ -79,8 +79,8 @@ flask run
 ## 🤝 Contributors
 ### Created with ☕, 🎧, and a touch of madness by:
 
-#### _LueWasHere_ – @LueWasHere
-#### _Greene80501_ - @greene80501
+#### _@LueWasHere_ – LueWasHere
+#### _@greene80501_ - Wyatt Green
 
 > _Special thanks to the original T3 Chat team for the inspiration and oppurtunity._
 
