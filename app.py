@@ -3,10 +3,13 @@ AUTHOR: LUEWASHERE
 DOB: 6/9/2025
 LAST MOD: 6/10/2025
 
-VERSION: 0.2
+VERSION: 0.3
 """
 # Web imports
-import flask
+from flask import Flask
+from flask import render_template
+from flask import redirect
+from flask import url_for
 
 # Database imports
 import sqlite3
@@ -46,6 +49,29 @@ logger.addHandler(file_handler)
 logger.addHandler(console_handler)
 
 logger.info("Logger setup!")
+
+# Flask setup
+app = Flask(__name__)
+
+@app.route("/")
+def default_page():
+    return redirect(url_for("chat"))
+
+@app.route("/chat")
+def chat():
+    return render_template("chat.html")
+
+@app.route("/settings")
+def settings():
+    return render_template("settings.html")
+
+@app.route("/auth")
+def auth():
+    return render_template("auth.html")
+
+@app.route("/admin")
+def admin():
+    return render_template("admin.html")
 
 # Database functions
 def load_db_script(script_name: str) -> str:
@@ -143,7 +169,8 @@ def main() -> None:
     users_db = db_lib.Users_DB()
     models_db = db_lib.Models_DB()
 
-    # continue...
+    app.run()
+    
 
 if __name__ == "__main__":
     try:
