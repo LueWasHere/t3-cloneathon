@@ -1,2 +1,2 @@
-api.env
-app.log
+*.env
+*.log
