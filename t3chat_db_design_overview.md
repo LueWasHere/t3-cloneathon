@@ -68,7 +68,7 @@ Tracks per-user API usage for billing and analytics.
 | `tokens_used`  | INTEGER   | Number of tokens used                      |
 | `status_code`  | TEXT      | Outcome of request: success, error, etc.   |
 
-### `model_capabilities`
+### `model`
 Defines model features, capabilities, and pricing.
 
 | Column               | Type    | Notes                                        |
