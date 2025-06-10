@@ -14,7 +14,7 @@ import sqlite3
 # Other imports
 import os
 import logging
-import database.lib.database as db_lib
+import database.lib.database_manager as db_lib
 
 # +===================================+
 # |                                   |
