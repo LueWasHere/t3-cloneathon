@@ -15,21 +15,17 @@ This project recreates the core experience of T3 Chat: a sleek interface for cha
 - 🧠 Message broadcasting to multiple models
 - 🗃️ Conversation history with persistence
 - 🌙 Dark mode support
-- 💻 Built with modern tools (Next.js, TailwindCSS, TypeScript, tRPC, etc.)
+- 💻 Built with modern tools (Flask, TailwindCSS, SQLite, etc.)
 
 ---
 
 ## 🛠️ Tech Stack
-(Examples)
+
 | Tool / Framework      | Purpose                       |
 |-----------------------|-------------------------------|
-| **Next.js**           | React Framework               |
+| **Flask**             | Python backend                |
 | **TailwindCSS**       | Utility-first styling         |
-| **tRPC**              | End-to-end typesafe APIs      |
-| **Prisma**            | Database ORM                  |
-| **SQLite / Postgres** | Backend persistence           |
-| **Zod**               | Type-safe validation          |
-| **Ollama / OpenAI**   | Model integration             |
+| **SQLite**            | Backend persistence           |
 
 ---
 
@@ -44,8 +40,8 @@ This project recreates the core experience of T3 Chat: a sleek interface for cha
 1. **Clone the repo:**
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/t3-chat-clone.git
-cd t3-chat-clone
+git clone https://github.com/LueWasHere/t3-cloneathon.git
+cd t3-cloneathon
 ```
 
 2. Create and activate a virtual environment:
@@ -65,9 +61,12 @@ pip install -r requirements.txt
 Create a .env file with your keys:
 
 ```ini
-OPENAI_API_KEY=your_key_here
-OLLAMA_API_HOST=http://localhost:11434
-DATABASE_URL=sqlite:///chat.db
+OPEN_AI=YOURAPIKEYHERE
+CLAUDE=YOURAPIKEYHERE
+GEMINI=YOURAPIKEYHERE
+GROK=YOURAPIKEYHERE
+TOGETHER_AI=YOURAPIKEYHERE
+DEEPSEEK=YOURAPIKEYHERE
 ```
 
 5. Run the Flask server:
@@ -79,7 +78,7 @@ flask run
 ## 🤝 Contributors
 ### Created with ☕, 🎧, and a touch of madness by:
 
-#### _@LueWasHere_ – LueWasHere
+#### _@LueWasHere_ – Adam Duncan
 #### _@greene80501_ - Wyatt Green
 
 > _Special thanks to the original T3 Chat team for the inspiration and oppurtunity._
