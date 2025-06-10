@@ -28,7 +28,6 @@ Stores all registered users and metadata.
 | `hashed_password`   | TEXT      | Auth (or link to OAuth)               |
 | `subscription_plan` | TEXT      | Tracks tier (e.g., free, premium)     |
 | `token_quota`       | INTEGER   | Rate limit enforcement (e.g., 500/wk) |
-| `last_active`       | TIMESTAMP | Analytics / UI optimization           |
 
 Why: Central identity for users, with future-proof fields for subscriptions and quotas.
 
