@@ -1,112 +1,99 @@
-**T3Chat Open Source Clone: Database Design Overview**
+# 📁 T3Chat Open Source Clone – Database Design
+
+This repository documents the database schema for an open-source clone of T3 Chat: a blazing-fast, multi-model AI chat interface. This setup uses two databases to separate authentication data from chat interaction data.
 
 ---
 
-## 📁 Database Architecture Overview
+## 🗃️ Database Overview
 
-This open-source chat platform mirrors T3 Chat’s core strengths: fast performance, model flexibility, clean UX, and efficient cost control. The database design reflects those goals by enabling:
-
-* Scalable user management
-* Chat session tracking per user
-* Token and usage monitoring
-* Flexibility across multiple AI models
-
-The architecture assumes a relational database (PostgreSQL recommended) but can be adapted to other setups.
+| Database     | Purpose                                      |
+|--------------|-----------------------------------------------|
+| `user.db`    | Manages authentication, account, and settings |
+| `data.db`    | Handles chats, messages, usage, and models     |
 
 ---
 
-## 📆 Core Tables Explained
+## 🔐 `user.db`
 
-### 1. **Users Table (`users`)**
+### `user_accounts`
+Stores user identity and subscription info.
 
-Stores all registered users and metadata.
-
-| Column              | Type      | Purpose                               |
-| ------------------- | --------- | ------------------------------------- |
-| `id`                | UUID      | Primary key                           |
-| `email`             | TEXT      | Login/account identity                |
-| `hashed_password`   | TEXT      | Auth (or link to OAuth)               |
-| `subscription_plan` | TEXT      | Tracks tier (e.g., free, premium)     |
-| `token_quota`       | INTEGER   | Rate limit enforcement (e.g., 500/wk) |
-
-Why: Central identity for users, with future-proof fields for subscriptions and quotas.
-
----
-
-### 2. **Chats Table (`chats`)**
-
-Represents each multi-turn conversation.
-
-| Column          | Type      | Purpose                              |
-| --------------- | --------- | ------------------------------------ |
-| `id`            | UUID      | Primary key                          |
-| `user_id`       | UUID      | Foreign key to `users`               |
-| `title`         | TEXT      | Auto-generated title or user-defined |
-| `created_at`    | TIMESTAMP | Used for filtering/sorting           |
-| `model_used`    | TEXT      | Records which LLM was used           |
-| `system_prompt` | TEXT      | Optional starter context             |
-
-Why: Separates chats logically for display and retrieval, supports session resume.
+| Column              | Type      | Notes                                  |
+|---------------------|-----------|----------------------------------------|
+| `user_id`           | UUID      | Primary key                            |
+| `email`             | TEXT      | Unique login                           |
+| `hashed_password`   | TEXT      | Hashed password or OAuth identifier    |
+| `subscription_plan` | TEXT      | Plan tier (e.g., free, pro)            |
+| `token_quota`       | INTEGER   | Remaining token quota                  |
+| `created_at`        | TIMESTAMP | Account creation timestamp             |
+| `timezone`          | TEXT      | Timezone string, e.g., "America/Denver" |
 
 ---
 
-### 3. **Messages Table (`messages`)**
+## 💬 `data.db`
 
-Logs every user or AI message.
+### `chat_sessions`
+Tracks individual conversations.
 
-| Column                | Type      | Purpose                          |
-| --------------------- | --------- | -------------------------------- |
-| `id`                  | UUID      | Primary key                      |
-| `chat_id`             | UUID      | Foreign key to `chats`           |
-| `sender`              | TEXT      | 'user' or 'ai'                   |
-| `message_content`     | TEXT      | Full message                     |
-| `timestamp`           | TIMESTAMP | Message time                     |
-| `model_response_time` | FLOAT     | Optional UX metric               |
-| `tokens_used`         | INTEGER   | Required for quota/cost tracking |
+| Column          | Type      | Notes                              |
+|-----------------|-----------|------------------------------------|
+| `chat_id`       | UUID      | Primary key                        |
+| `user_id`       | UUID      | FK to `user_accounts.user_id`      |
+| `title`         | TEXT      | User-defined or AI-generated title |
+| `created_at`    | TIMESTAMP | Timestamp of chat creation         |
+| `system_prompt` | TEXT      | Optional system message seed       |
 
-Why: Enables token monitoring, real-time UI updates, and historical chat review.
+### `chat_messages`
+Logs all messages exchanged in a session.
+
+| Column            | Type      | Notes                                  |
+|-------------------|-----------|----------------------------------------|
+| `message_id`      | UUID      | Primary key                            |
+| `chat_id`         | UUID      | FK to `chat_sessions.chat_id`          |
+| `sender_type`     | TEXT      | Either 'user' or 'ai'                  |
+| `message_text`    | TEXT      | Content of the message                 |
+| `timestamp`       | TIMESTAMP | Message timestamp                      |
+| `tokens_used`     | INTEGER   | Number of tokens used                  |
+| `model_used`      | TEXT      | Model identifier (e.g., gpt-4o)        |
+
+### `usage_metrics`
+Tracks per-user API usage for billing and analytics.
+
+| Column         | Type      | Notes                                      |
+|----------------|-----------|--------------------------------------------|
+| `usage_id`     | UUID      | Primary key                                |
+| `user_id`      | UUID      | FK to `user_accounts.user_id`              |
+| `timestamp`    | TIMESTAMP | Time of API interaction                    |
+| `model_name`   | TEXT      | Model identifier used                      |
+| `tokens_used`  | INTEGER   | Number of tokens used                      |
+| `status_code`  | TEXT      | Outcome of request: success, error, etc.   |
+
+### `model_capabilities`
+Defines model features, capabilities, and pricing.
+
+| Column               | Type    | Notes                                        |
+|----------------------|---------|----------------------------------------------|
+| `model_id`           | UUID    | Primary key                                  |
+| `provider_name`      | TEXT    | e.g., OpenAI, Anthropic                      |
+| `model_name`         | TEXT    | e.g., gpt-4o, claude-3-opus                  |
+| `supports_images`    | BOOLEAN | Accepts image input                          |
+| `supports_pdfs`      | BOOLEAN | Accepts PDF/document input                   |
+| `multimodal_input`   | BOOLEAN | Supports combined vision + text input        |
+| `reasoning_enabled`  | BOOLEAN | Optimized for complex reasoning and logic    |
+| `max_token_limit`    | INTEGER | Maximum number of tokens per request         |
+| `usd_per_1k_tokens`  | FLOAT   | Cost per 1,000 tokens in USD                 |
+| `is_active`          | BOOLEAN | Indicates if model is currently available    |
 
 ---
 
-### 4. **Usage Logs Table (`usage_logs`)**
+## 🧠 Design Principles
 
-Detailed logs for cost, throttling, and abuse prevention.
-
-| Column        | Type      | Purpose                   |
-| ------------- | --------- | ------------------------- |
-| `id`          | UUID      | Primary key               |
-| `user_id`     | UUID      | Foreign key to `users`    |
-| `timestamp`   | TIMESTAMP | When the usage occurred   |
-| `model`       | TEXT      | Which LLM was used        |
-| `tokens_used` | INTEGER   | Actual API cost metric    |
-| `status`      | TEXT      | success, throttled, error |
-
-Why: Enables per-user and per-model analytics, cost tracking, throttling.
+- **Two DBs**: cleanly separates auth from AI interaction
+- **Consistent Naming**: all column/table names are normalized and scoped
+- **Token-Aware**: optimized for usage tracking and API cost modeling
+- **Scalable**: pre-indexing on foreign keys and timestamps assumed
 
 ---
 
-### 5. **Model Cache Table (Optional, `model_cache`)**
+> **Repo by**: Wyatt Greene
 
-Useful for reusing prompt responses.
-
-| Column              | Type      | Purpose                            |
-| ------------------- | --------- | ---------------------------------- |
-| `hash_prompt_input` | TEXT      | Deterministic hash of prompt input |
-| `response`          | TEXT      | Saved model response               |
-| `model`             | TEXT      | e.g., gpt-4, claude-3              |
-| `created_at`        | TIMESTAMP | Expiry or invalidation reference   |
-
-Why: Reduces cost and latency by caching frequent prompts.
-
----
-
-## ⚖️ Design Philosophy
-
-* **Modular**: Separated tables for flexibility and clarity
-* **Token-aware**: Designed for rate limiting and cost analytics
-* **LLM-agnostic**: Supports multiple models per chat or message
-* **Scalable**: Index on user\_id, chat\_id, timestamps for performance
-
-This schema is designed to support everything from a solo chat UI to a paid multi-user LLM access platform.
-
-Let me know if you want the Prisma, SQL, or MongoDB implementation next.
