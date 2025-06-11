@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /* ==========================================================================
    START: Authentication Styles (from auth.css)
    ========================================================================== */
@@ -169,4 +170,177 @@
     background-color: rgba(16, 185, 129, 0.1);
     color: #6ee7b7;
     border: 1px solid rgba(16, 185, 129, 0.2);
+=======
+/* ==========================================================================
+   START: Authentication Styles (from auth.css)
+   ========================================================================== */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: var(--bg-primary);
+    padding: 20px;
+}
+
+.auth-box {
+    background-color: var(--bg-secondary);
+    padding: 40px;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 10px 30px -10px var(--shadow-color);
+    text-align: center;
+}
+
+.auth-header {
+    margin-bottom: 24px;
+}
+
+.auth-header .icon {
+    color: var(--accent-purple);
+    margin-bottom: 16px;
+}
+
+.auth-header h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.auth-header p {
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.google-sign-in-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 14px 20px;
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+.google-sign-in-btn:hover {
+    background-color: var(--bg-tertiary);
+    border-color: var(--border-hover);
+    text-decoration: none;
+    color: var(--text-primary);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.google-sign-in-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.auth-divider {
+    position: relative;
+    margin: 24px 0;
+    text-align: center;
+}
+.auth-divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: var(--border-color);
+}
+.auth-divider span {
+    background-color: var(--bg-secondary);
+    color: var(--text-secondary);
+    padding: 0 16px;
+    font-size: 14px;
+    font-weight: 500;
+    position: relative;
+    z-index: 1;
+}
+
+.input-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+.input-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+.input-group input {
+    width: 100%;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 12px 15px;
+    color: var(--text-primary);
+    font-size: 14px;
+    transition: border-color 0.2s, background-color 0.3s ease;
+}
+.input-group input:focus {
+    outline: none;
+    border-color: var(--accent-purple);
+    box-shadow: 0 0 0 2px rgba(147, 51, 234, 0.2);
+}
+
+.auth-btn {
+    width: 100%;
+    background: var(--gradient-primary);
+    border: none;
+    color: white;
+    padding: 14px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 10px;
+    margin-bottom: 24px;
+    transition: opacity 0.2s;
+}
+.auth-btn:hover {
+    opacity: 0.9;
+}
+
+.auth-footer p {
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+.auth-footer a {
+    color: var(--accent-purple);
+    text-decoration: none;
+    font-weight: 500;
+}
+.auth-footer a:hover {
+    text-decoration: underline;
+}
+
+.flash-message {
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    text-align: center;
+}
+.flash-message.error {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #fca5a5;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+.flash-message.success {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: #6ee7b7;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+>>>>>>> 8d3172731d5e6e3861efbcbb51bc008a999da776
 }

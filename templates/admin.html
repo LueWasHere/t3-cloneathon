@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -797,4 +798,805 @@
         }
     </script>
 </body>
+=======
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T3 Chat Admin - Model Management</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+        
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+        }
+        
+        .admin-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+        }
+        
+        .admin-nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .nav-btn {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .nav-btn:hover, .nav-btn.active {
+            background: var(--accent-purple);
+            color: white;
+            border-color: var(--accent-purple);
+        }
+        
+        .admin-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--text-primary);
+        }
+        
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .search-input {
+            flex: 1;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px 15px;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-purple);
+        }
+        
+        .btn {
+            background: var(--accent-purple);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: opacity 0.2s;
+        }
+        
+        .btn:hover {
+            opacity: 0.9;
+        }
+        
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+        
+        .btn-danger {
+            background: #ef4444;
+        }
+        
+        .btn-success {
+            background: #10b981;
+        }
+
+        /* --- NEW: Scrollable Table Container --- */
+        .table-container {
+            max-height: 65vh; /* Set a max height */
+            overflow-y: auto;   /* Enable vertical scroll */
+            overflow-x: auto;   /* Keep horizontal scroll for small screens */
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+        
+        .models-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .models-table th,
+        .models-table td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap; /* Prevent text wrapping that misaligns columns */
+        }
+        
+        .models-table th {
+            background: var(--bg-tertiary);
+            font-weight: 600;
+            color: var(--text-primary);
+            position: sticky; /* <<< This is the magic! */
+            top: 0;           /* <<< Stick to the top of the container */
+            z-index: 10;      /* <<< Ensure header is above scrolling content */
+        }
+        
+        .models-table tbody tr:hover {
+            background: var(--bg-tertiary);
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .status-active {
+            background: #10b981;
+            color: white;
+        }
+        
+        .status-inactive {
+            background: #6b7280;
+            color: white;
+        }
+        
+        .capability-icons {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .capability-icon {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .capability-vision { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .capability-reasoning { background: rgba(147, 51, 234, 0.2); color: #9333ea; }
+        .capability-docs { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+        
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .action-btn {
+            padding: 5px 10px;
+            font-size: 12px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        
+        .action-btn:hover {
+            opacity: 0.8;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .form-input {
+            width: 100%;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 10px;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent-purple);
+        }
+        
+        .form-checkbox {
+            margin-right: 8px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .alert {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+        
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid #10b981;
+            color: #10b981;
+        }
+        
+        .alert-error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--accent-purple);
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1 class="admin-title">🛠️ T3 Chat Admin</h1>
+            <a href="/" class="btn btn-secondary">← Back to Chat</a>
+        </div>
+        
+        <div class="admin-nav">
+            <button class="nav-btn active" onclick="showSection('overview')">Overview</button>
+            <button class="nav-btn" onclick="showSection('models')">Models</button>
+            <button class="nav-btn" onclick="showSection('providers')">Providers</button>
+        </div>
+        
+        <!-- Overview Section -->
+        <div id="overview-section" class="admin-section">
+            <h2 class="section-title">Database Overview</h2>
+            <div class="stats-grid" id="statsGrid">
+                <!-- Stats will be loaded here -->
+            </div>
+        </div>
+        
+        <!-- Models Section -->
+        <div id="models-section" class="admin-section" style="display: none;">
+            <h2 class="section-title">Model Management</h2>
+            
+            <div class="search-bar">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search models by name, provider, or notes...">
+                <button class="btn" onclick="searchModels()">Search</button>
+                <button class="btn btn-success" onclick="openAddModal()">+ Add Model</button>
+            </div>
+            
+            <!-- MODIFIED: Wrapped table in the new scrollable container -->
+            <div class="table-container">
+                <table class="models-table">
+                    <thead>
+                        <tr>
+                            <th>Provider</th>
+                            <th>Model Name</th>
+                            <th>Status</th>
+                            <th>Capabilities</th>
+                            <th>Context Window</th>
+                            <th>Input Price</th>
+                            <th>Output Price</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modelsTableBody">
+                        <!-- Models will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Providers Section -->
+        <div id="providers-section" class="admin-section" style="display: none;">
+            <h2 class="section-title">Providers</h2>
+            <div id="providersContainer" class="stats-grid">
+                <!-- Providers will be loaded here -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add/Edit Model Modal -->
+    <div id="modelModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Add New Model</h3>
+                <button class="close-btn" onclick="closeModal()">×</button>
+            </div>
+            
+            <div id="modalAlert"></div>
+            
+            <form id="modelForm">
+                <input type="hidden" id="modelId">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="providerName">Provider Name *</label>
+                        <input type="text" class="form-input" id="providerName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="modelName">Model Name *</label>
+                        <input type="text" class="form-input" id="modelName" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="contextWindow">Context Window (tokens)</label>
+                        <input type="number" class="form-input" id="contextWindow">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="inputPrice">Input Price (USD per million tokens)</label>
+                        <input type="number" step="0.01" class="form-input" id="inputPrice">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="outputPrice">Output Price (USD per million tokens)</label>
+                        <input type="number" step="0.01" class="form-input" id="outputPrice">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="isActive">
+                            <input type="checkbox" class="form-checkbox" id="isActive" checked>
+                            Active
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Capabilities</label>
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                        <label><input type="checkbox" class="form-checkbox" id="supportsImages"> Image Input</label>
+                        <label><input type="checkbox" class="form-checkbox" id="supportsPdfs"> PDF Input</label>
+                        <label><input type="checkbox" class="form-checkbox" id="multimodal"> Multimodal</label>
+                        <label><input type="checkbox" class="form-checkbox" id="reasoning"> Reasoning</label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="notes">Notes</label>
+                    <textarea class="form-input" id="notes" rows="3" placeholder="Description or additional notes about the model"></textarea>
+                </div>
+                
+                <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn" id="saveBtn">Save Model</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        let currentModels = [];
+        let currentSection = 'overview';
+        
+        // Initialize the admin interface
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            
+            // Search on Enter key
+            document.getElementById('searchInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchModels();
+                }
+            });
+            
+            // Form submission
+            document.getElementById('modelForm').addEventListener('submit', saveModel);
+        });
+
+        function loadAllData() {
+            loadModels();
+            loadProviders();
+            loadOverview();
+        }
+        
+        function showSection(section) {
+            // Hide all sections
+            document.querySelectorAll('.admin-section').forEach(s => s.style.display = 'none');
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            
+            // Show selected section
+            document.getElementById(section + '-section').style.display = 'block';
+            event.target.classList.add('active');
+            currentSection = section;
+        }
+        
+        function loadOverview() {
+            Promise.all([
+                fetch('/admin/models').then(res => res.json()),
+                fetch('/admin/providers').then(res => res.json())
+            ]).then(([modelsData, providersData]) => {
+                const models = modelsData.models || [];
+                const providers = providersData.providers || [];
+                
+                const totalModels = models.length;
+                const activeModels = models.filter(m => m.is_active).length;
+                const totalProviders = providers.length;
+                
+                const validPrices = models.filter(m => m.usd_per_million_input_tokens > 0);
+                const avgInputPrice = validPrices.length > 0
+                    ? validPrices.reduce((sum, m) => sum + m.usd_per_million_input_tokens, 0) / validPrices.length
+                    : 0;
+                
+                document.getElementById('statsGrid').innerHTML = `
+                    <div class="stat-card">
+                        <div class="stat-number">${totalModels}</div>
+                        <div class="stat-label">Total Models</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${activeModels}</div>
+                        <div class="stat-label">Active Models</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${totalProviders}</div>
+                        <div class="stat-label">Providers</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">$${avgInputPrice.toFixed(2)}</div>
+                        <div class="stat-label">Avg Input Price</div>
+                    </div>
+                `;
+            }).catch(error => {
+                console.error('Error loading overview:', error);
+                document.getElementById('statsGrid').innerHTML = `<p>Error loading overview stats.</p>`;
+            });
+        }
+        
+        function loadModels() {
+            fetch('/admin/models')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) throw new Error(data.error);
+                    currentModels = data.models || [];
+                    renderModelsTable(currentModels);
+                })
+                .catch(error => {
+                    console.error('Error loading models:', error);
+                    showAlert('Error loading models: ' + error.message, 'error');
+                });
+        }
+        
+        function renderModelsTable(models) {
+            const tbody = document.getElementById('modelsTableBody');
+            if (!models || models.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 20px;">No models found.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = models.map(model => `
+                <tr>
+                    <td>${model.provider_name || 'N/A'}</td>
+                    <td style="white-space: normal;"><strong>${model.model_name}</strong><br><small style="color: var(--text-secondary);">${model.notes || ''}</small></td>
+                    <td>
+                        <span class="status-badge ${model.is_active ? 'status-active' : 'status-inactive'}">
+                            ${model.is_active ? 'Active' : 'Inactive'}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="capability-icons">
+                            ${model.supports_images_input ? '<div class="capability-icon capability-vision" title="Vision">👁️</div>' : ''}
+                            ${model.reasoning_enabled ? '<div class="capability-icon capability-reasoning" title="Reasoning">🧠</div>' : ''}
+                            ${model.supports_pdfs_input ? '<div class="capability-icon capability-docs" title="Documents">📄</div>' : ''}
+                        </div>
+                    </td>
+                    <td>${model.context_window_max_tokens ? model.context_window_max_tokens.toLocaleString() : 'N/A'}</td>
+                    <td>${model.usd_per_million_input_tokens != null ? '$' + model.usd_per_million_input_tokens : 'N/A'}</td>
+                    <td>${model.usd_per_million_output_tokens != null ? '$' + model.usd_per_million_output_tokens : 'N/A'}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="action-btn btn" onclick="editModel(${model.id})">Edit</button>
+                            <button class="action-btn ${model.is_active ? 'btn-secondary' : 'btn-success'}" onclick="toggleModel(${model.id})">
+                                ${model.is_active ? 'Disable' : 'Enable'}
+                            </button>
+                            <button class="action-btn btn-danger" onclick="deleteModel(${model.id}, '${model.model_name.replace(/'/g, "\\'")}')">Delete</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function loadProviders() {
+            fetch('/admin/providers')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) throw new Error(data.error);
+                    const providers = data.providers || [];
+                    const container = document.getElementById('providersContainer');
+                     if (providers.length === 0) {
+                        container.innerHTML = `<p>No providers found.</p>`;
+                        return;
+                    }
+                    container.innerHTML = providers.map(provider => `
+                        <div class="stat-card" style="text-align: left;">
+                            <h3 style="font-size: 18px; margin-bottom: 10px;">${provider.name}</h3>
+                            <p><strong>Total Models:</strong> ${provider.total_models}</p>
+                            <p><strong>Active Models:</strong> ${provider.active_models}</p>
+                        </div>
+                    `).join('');
+                })
+                .catch(error => {
+                    console.error('Error loading providers:', error);
+                    document.getElementById('providersContainer').innerHTML = `<p>Error loading providers.</p>`;
+                });
+        }
+        
+        function searchModels() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) {
+                renderModelsTable(currentModels);
+                return;
+            }
+            
+            fetch(`/admin/search?q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) throw new Error(data.error);
+                    renderModelsTable(data.models || []);
+                })
+                .catch(error => {
+                    console.error('Error searching models:', error);
+                     showAlert('Error searching models: ' + error.message, 'error');
+                });
+        }
+        
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = 'Add New Model';
+            document.getElementById('modelForm').reset();
+            document.getElementById('modelId').value = '';
+            document.getElementById('isActive').checked = true;
+            document.getElementById('modalAlert').innerHTML = '';
+            document.getElementById('modelModal').classList.add('active');
+        }
+        
+        function editModel(modelId) {
+            const model = currentModels.find(m => m.id === modelId);
+            if (!model) return;
+            
+            document.getElementById('modalTitle').textContent = 'Edit Model';
+            document.getElementById('modelId').value = model.id;
+            document.getElementById('providerName').value = model.provider_name || '';
+            document.getElementById('modelName').value = model.model_name || '';
+            document.getElementById('contextWindow').value = model.context_window_max_tokens || '';
+            document.getElementById('inputPrice').value = model.usd_per_million_input_tokens || '';
+            document.getElementById('outputPrice').value = model.usd_per_million_output_tokens || '';
+            document.getElementById('isActive').checked = model.is_active;
+            document.getElementById('supportsImages').checked = model.supports_images_input;
+            document.getElementById('supportsPdfs').checked = model.supports_pdfs_input;
+            document.getElementById('multimodal').checked = model.multimodal_input;
+            document.getElementById('reasoning').checked = model.reasoning_enabled;
+            document.getElementById('notes').value = model.notes || '';
+            document.getElementById('modalAlert').innerHTML = '';
+            document.getElementById('modelModal').classList.add('active');
+        }
+        
+        function closeModal() {
+            document.getElementById('modelModal').classList.remove('active');
+        }
+        
+        function saveModel(event) {
+            event.preventDefault();
+            
+            const modelId = document.getElementById('modelId').value;
+            const isEdit = !!modelId;
+            
+            const formData = {
+                provider_name: document.getElementById('providerName').value,
+                model_name: document.getElementById('modelName').value,
+                context_window_max_tokens: parseInt(document.getElementById('contextWindow').value) || null,
+                usd_per_million_input_tokens: parseFloat(document.getElementById('inputPrice').value) || null,
+                usd_per_million_output_tokens: parseFloat(document.getElementById('outputPrice').value) || null,
+                is_active: document.getElementById('isActive').checked,
+                supports_images_input: document.getElementById('supportsImages').checked,
+                supports_pdfs_input: document.getElementById('supportsPdfs').checked,
+                multimodal_input: document.getElementById('multimodal').checked,
+                reasoning_enabled: document.getElementById('reasoning').checked,
+                notes: document.getElementById('notes').value
+            };
+            
+            const url = isEdit ? `/admin/models/${modelId}` : '/admin/models';
+            const method = isEdit ? 'PUT' : 'POST';
+            
+            fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    closeModal();
+                    loadAllData();
+                    showAlert(data.message, 'success');
+                } else {
+                    showModalAlert(data.error || 'An unknown error occurred', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error saving model:', error);
+                showModalAlert('Network error: ' + error.message, 'error');
+            });
+        }
+        
+        function toggleModel(modelId) {
+            fetch(`/admin/models/${modelId}/toggle`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        loadAllData();
+                        showAlert(data.message, 'success');
+                    } else {
+                        showAlert(data.error || 'An error occurred', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error toggling model:', error);
+                    showAlert('Network error: ' + error.message, 'error');
+                });
+        }
+        
+        function deleteModel(modelId, modelName) {
+            if (!confirm(`Are you sure you want to delete the model "${modelName}"? This action cannot be undone.`)) {
+                return;
+            }
+            
+            fetch(`/admin/models/${modelId}`, { method: 'DELETE' })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    loadAllData();
+                    showAlert(data.message, 'success');
+                } else {
+                    showAlert(data.error || 'An error occurred', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error deleting model:', error);
+                showAlert('Network error: ' + error.message, 'error');
+            });
+        }
+        
+        function showAlert(message, type) {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            alert.style.cssText = `
+                position: fixed; top: 20px; right: 20px; z-index: 9999;
+                max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                animation: slideIn 0.3s ease-out, fadeOut 0.5s ease-in 4.5s forwards;
+            `;
+            
+            const keyframes = `
+                @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+                @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; transform: translateY(-20px); } }
+            `;
+            const styleSheet = document.createElement("style");
+            styleSheet.innerText = keyframes;
+            document.head.appendChild(styleSheet);
+
+            document.body.appendChild(alert);
+            
+            setTimeout(() => {
+                if (document.body.contains(alert)) {
+                    document.body.removeChild(alert);
+                }
+                document.head.removeChild(styleSheet);
+            }, 5000);
+        }
+        
+        function showModalAlert(message, type) {
+            const alertContainer = document.getElementById('modalAlert');
+            alertContainer.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+        }
+    </script>
+</body>
+>>>>>>> 8d3172731d5e6e3861efbcbb51bc008a999da776
 </html>
